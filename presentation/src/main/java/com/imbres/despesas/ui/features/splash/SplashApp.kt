@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,9 +26,11 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.imbres.despesas.R
+import com.imbres.despesas.components.DataStoreManager
 
 @Composable
 fun SplashApp(
+    dataStoreManager: DataStoreManager,
     onGoToNextScreen: () -> Unit,
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.logo))
@@ -79,5 +82,7 @@ fun SplashApp(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun Preview() {
-    SplashApp(onGoToNextScreen = {})
+    SplashApp(
+        dataStoreManager = DataStoreManager(LocalContext.current),
+        onGoToNextScreen = {})
 }

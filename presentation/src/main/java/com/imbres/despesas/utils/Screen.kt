@@ -5,4 +5,7 @@ sealed interface Screen {
     @kotlinx.serialization.Serializable
     data object Splash: Screen
 
+    @kotlinx.serialization.Serializable
+    data object SignIn: Screen
+
 }
