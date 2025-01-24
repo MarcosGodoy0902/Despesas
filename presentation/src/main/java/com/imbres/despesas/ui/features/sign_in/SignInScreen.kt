@@ -1,5 +1,6 @@
 package com.imbres.despesas.ui.features.sign_in
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -56,11 +57,23 @@ fun SignInContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
+            var emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
+            val scope = rememberCoroutineScope()
+            val userDetails by dataStoreManager.getFromDataStore()
+                .collectAsState(initial = null)
+
             ValidatingInputEmail(
                 email = emailViewModel.email,
-                updateState = { input -> emailViewModel.updateEmail(input) },
-                validatorHasErrors = emailViewModel.emailHasErrors
+                //email = userDetails?.email ?: "",
+                updateState = {
+                    emailViewModel.updateEmail(it)
+                    if (it.isEmpty() || it !== userDetails?.email) {
+                        scope.launch {
+                            dataStoreManager.clearDataStore()
+                        }
+                    }
+                },
+                validatorHasErrors = emailViewModel.emailHasErrors,
             )
 
             val passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
@@ -71,14 +84,14 @@ fun SignInContent(
             )
 
             var checkedMeuUsuario by remember { mutableStateOf(false) }
-            val scope = rememberCoroutineScope()
-            val userDetails by dataStoreManager.getFromDataStore()
-                .collectAsState(initial = null)
             checkedMeuUsuario = userDetails?.checked ?: false
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val TAG = "HasErrors"
+                Log.d(TAG, "email: $emailViewModel.email")
+                Log.d(TAG, "password: $passwordViewModel.password")
                 Checkbox(
                     checked = checkedMeuUsuario,
                     onCheckedChange = {
@@ -92,8 +105,9 @@ fun SignInContent(
                             )
                         }
                     },
-                    enabled = emailViewModel.emailHasErrors && passwordViewModel.passwordHasErrors
+                    enabled = emailViewModel.email.isNotEmpty() && passwordViewModel.password.isNotEmpty() && !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
                 )
+
                 Text(
                     text = "Lembrar meu usuário",
                     fontSize = 12.sp,

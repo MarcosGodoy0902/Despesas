@@ -1,5 +1,6 @@
 package com.imbres.despesas.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -39,6 +40,7 @@ https://developer.android.com/develop/ui/compose/text/user-input?hl=pt-br
 https://github.com/android/snippets/blob/c79a414f423d09d009c92d69fb71e882e6edd39b/compose/snippets/src/main/java/com/example/compose/snippets/text/TextSnippets.kt#L537-L559
 */
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ValidatingInputEmail(
     email: String,
@@ -186,6 +188,7 @@ fun ValidatingInputPassword(
 class PasswordViewModel : ViewModel() {
     var password by mutableStateOf("")
         private set
+
     // Flag to track whether validation should be performed
     private var shouldValidate by mutableStateOf(false)
 
@@ -195,9 +198,9 @@ class PasswordViewModel : ViewModel() {
         val minLength = 6
         // Add more validation rules as needed
         password.isEmpty() || password.length < minLength
-        || !password.contains(Regex("[A-Z]")) // Example: Requires uppercase
-         || !password.contains(Regex("[a-z]")) // Example: Requires lowercase
-         || !password.contains(Regex("[0-9]")) // Example: Requires a digit
+                || !password.contains(Regex("[A-Z]")) // Example: Requires uppercase
+                || !password.contains(Regex("[a-z]")) // Example: Requires lowercase
+                || !password.contains(Regex("[0-9]")) // Example: Requires a digit
     }
 
     fun updatePassword(input: String) {
