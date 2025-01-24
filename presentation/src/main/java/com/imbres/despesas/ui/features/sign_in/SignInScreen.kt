@@ -61,15 +61,21 @@ fun SignInContent(
             val scope = rememberCoroutineScope()
             val userDetails by dataStoreManager.getFromDataStore()
                 .collectAsState(initial = null)
+            var storeEmail = ""
 
             if (userDetails?.email?.isNotEmpty() == true) {
-                emailViewModel.updateEmail(userDetails!!.email)
+                storeEmail = userDetails!!.email
+                emailViewModel.updateEmail((storeEmail))
             }
 
             ValidatingInputEmail(
                 email = emailViewModel.email,
                 updateState = {
-                    emailViewModel.updateEmail(it)
+                    if (storeEmail.isNotEmpty()){
+                        emailViewModel.updateEmail((storeEmail))
+                    } else {
+                        emailViewModel.updateEmail(it)
+                    }
                     if (it.isEmpty() || it !== userDetails?.email) {
                         scope.launch {
                             dataStoreManager.clearDataStore()
@@ -92,9 +98,6 @@ fun SignInContent(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val TAG = "HasErrors"
-                Log.d(TAG, "email: $emailViewModel.email")
-                Log.d(TAG, "password: $passwordViewModel.password")
                 Checkbox(
                     checked = checkedMeuUsuario,
                     onCheckedChange = {
