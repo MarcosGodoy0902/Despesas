@@ -62,9 +62,12 @@ fun SignInContent(
             val userDetails by dataStoreManager.getFromDataStore()
                 .collectAsState(initial = null)
 
+            if (userDetails?.email?.isNotEmpty() == true) {
+                emailViewModel.updateEmail(userDetails!!.email)
+            }
+
             ValidatingInputEmail(
                 email = emailViewModel.email,
-                //email = userDetails?.email ?: "",
                 updateState = {
                     emailViewModel.updateEmail(it)
                     if (it.isEmpty() || it !== userDetails?.email) {
