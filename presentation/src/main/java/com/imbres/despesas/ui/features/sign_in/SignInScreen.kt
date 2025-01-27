@@ -57,14 +57,18 @@ fun SignInContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             var emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
+            var passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
             val scope = rememberCoroutineScope()
             val userDetails by dataStoreManager.getFromDataStore()
                 .collectAsState(initial = null)
             var storeEmail = ""
+            var storePassword = ""
 
             if (userDetails?.email?.isNotEmpty() == true) {
                 storeEmail = userDetails!!.email
+                storePassword = userDetails!!.password
                 emailViewModel.updateEmail((storeEmail))
+                passwordViewModel.updatePassword((storePassword))
             }
 
             ValidatingInputEmail(
@@ -85,10 +89,22 @@ fun SignInContent(
                 validatorHasErrors = emailViewModel.emailHasErrors,
             )
 
-            val passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
             ValidatingInputPassword(
                 password = passwordViewModel.password,
-                updateState = { input -> passwordViewModel.updatePassword(input) },
+                //updateState = { input -> passwordViewModel.updatePassword(input) },
+                updateState = {
+                    if (storePassword.isNotEmpty()) {
+                        passwordViewModel.updatePassword((storePassword))
+                    } else {
+                        passwordViewModel.updatePassword(it)
+                    }
+                    if (it.isEmpty() || it !== userDetails?.password) {
+                        scope.launch {
+                            dataStoreManager.clearDataStore()
+                            passwordViewModel.updatePassword(it)
+                        }
+                    }
+                },
                 validatorHasErrors = passwordViewModel.passwordHasErrors
             )
 
