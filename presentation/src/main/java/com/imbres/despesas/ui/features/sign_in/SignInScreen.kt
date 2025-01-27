@@ -1,6 +1,5 @@
 package com.imbres.despesas.ui.features.sign_in
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -71,7 +70,7 @@ fun SignInContent(
             ValidatingInputEmail(
                 email = emailViewModel.email,
                 updateState = {
-                    if (storeEmail.isNotEmpty()){
+                    if (storeEmail.isNotEmpty()) {
                         emailViewModel.updateEmail((storeEmail))
                     } else {
                         emailViewModel.updateEmail(it)
@@ -79,6 +78,7 @@ fun SignInContent(
                     if (it.isEmpty() || it !== userDetails?.email) {
                         scope.launch {
                             dataStoreManager.clearDataStore()
+                            emailViewModel.updateEmail(it)
                         }
                     }
                 },
