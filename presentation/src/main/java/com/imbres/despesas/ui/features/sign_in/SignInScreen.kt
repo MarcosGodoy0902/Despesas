@@ -18,7 +18,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,19 +40,22 @@ fun SignInScreen(
     dataStoreManager: DataStoreManager,
     onGoBack: () -> Boolean,
     onGoToSignInScreen: () -> Unit,
+    onGoToLostPasswordScreen: () -> Unit,
 ) {
-    SignInContent(
+    Content(
         dataStoreManager,
         onGoBack,
         onGoToSignInScreen,
+        onGoToLostPasswordScreen
     )
 }
 
 @Composable
-fun SignInContent(
+fun Content(
     dataStoreManager: DataStoreManager,
     onGoBack: () -> Boolean,
     onGoToSignUpScreen: () -> Unit,
+    onGoToLostPasswordScreen: () -> Unit,
 ) {
     Column {
         Column(
@@ -153,7 +155,7 @@ fun SignInContent(
                 Text(
                     text = "Esqueci a senha",
                     modifier = Modifier.clickable {
-                        //onGoToLostPasswordScreen()
+                        onGoToLostPasswordScreen()
                     },
                     color = colorResource(id = R.color.blue_500),
                     fontSize = 12.sp,
@@ -172,6 +174,7 @@ fun Preview() {
     SignInScreen(
         dataStoreManager = DataStoreManager(LocalContext.current),
         onGoBack = { true },
-        onGoToSignInScreen = {}
+        onGoToSignInScreen = {},
+        onGoToLostPasswordScreen = {}
     )
 }

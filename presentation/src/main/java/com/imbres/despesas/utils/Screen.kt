@@ -8,4 +8,7 @@ sealed interface Screen {
     @kotlinx.serialization.Serializable
     data object SignIn: Screen
 
+    @kotlinx.serialization.Serializable
+    data object LostPassword: Screen
+
 }
