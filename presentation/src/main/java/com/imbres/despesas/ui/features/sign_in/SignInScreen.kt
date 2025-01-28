@@ -30,8 +30,9 @@ import com.imbres.despesas.R
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
 import com.imbres.despesas.components.PasswordViewModel
-import com.imbres.despesas.components.ValidatingInputEmail
+import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputPassword
+import com.imbres.despesas.components.validatingInputEmail
 import com.imbres.despesas.model.UserDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -81,28 +82,30 @@ fun Content(
             }
 
             // email
-            ValidatingInputEmail(
-                email = emailViewModel.email,
-                updateState = {
-                    if (storeEmail.isNotEmpty()) {
-                        emailViewModel.updateEmail((storeEmail))
-                    } else {
-                        emailViewModel.updateEmail(it)
-                    }
-                    if (it.isEmpty() || it !== userDetails?.email) {
-                        scope.launch {
-                            dataStoreManager.clearDataStore()
+            if (validatingInputEmail(
+                    email = emailViewModel.email,
+                    updateState = {
+                        if (storeEmail.isNotEmpty()) {
+                            emailViewModel.updateEmail((storeEmail))
+                        } else {
                             emailViewModel.updateEmail(it)
                         }
-                    }
-                },
-                validatorHasErrors = emailViewModel.emailHasErrors,
-            )
+                        if (it.isEmpty() || it !== userDetails?.email) {
+                            scope.launch {
+                                dataStoreManager.clearDataStore()
+                                emailViewModel.updateEmail(it)
+                            }
+                        }
+                    },
+                    validatorHasErrors = emailViewModel.emailHasErrors,
+                )
+            ) {
+                emailViewModel.clearEmail()
+            }
 
             // password
             ValidatingInputPassword(
                 password = passwordViewModel.password,
-                //updateState = { input -> passwordViewModel.updatePassword(input) },
                 updateState = {
                     if (storePassword.isNotEmpty()) {
                         passwordViewModel.updatePassword((storePassword))
@@ -120,14 +123,26 @@ fun Content(
             )
 
             // remember user / lost password
-            ValidatingUserAcess(
-                userDetails,
-                scope,
-                dataStoreManager,
-                emailViewModel,
-                passwordViewModel,
-                onGoToLostPasswordScreen
-            )
+            Column(
+                Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ValidatingUserAcess(
+                    userDetails,
+                    scope,
+                    dataStoreManager,
+                    emailViewModel,
+                    passwordViewModel,
+                    onGoToLostPasswordScreen
+                )
+
+                //  process
+                val errorButton =
+                    !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
+                ValidatingButton(errorButton, "Entrar")
+
+            }
         }
     }
 }
@@ -146,10 +161,9 @@ private fun ValidatingUserAcess(
 
     Row(
         Modifier
-            .fillMaxWidth()
-            .padding(end = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -175,20 +189,20 @@ private fun ValidatingUserAcess(
                 fontSize = 12.sp,
                 fontWeight = FontWeight(700),
                 color = colorResource(id = R.color.blue_500),
-                textAlign = TextAlign.Center
             )
         }
         Text(
             text = "Esqueci a senha",
-            modifier = Modifier.clickable {
-                onGoToLostPasswordScreen()
-            },
+            modifier = Modifier
+                .padding(end = 20.dp)
+                .clickable {
+                    onGoToLostPasswordScreen()
+                },
             color = colorResource(id = R.color.blue_500),
             fontSize = 12.sp,
             fontWeight = FontWeight(700),
             textAlign = TextAlign.Start
         )
-
     }
 }
 

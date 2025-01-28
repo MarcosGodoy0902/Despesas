@@ -2,16 +2,22 @@ package com.imbres.despesas.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -22,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
@@ -42,15 +49,16 @@ https://github.com/android/snippets/blob/c79a414f423d09d009c92d69fb71e882e6edd39
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ValidatingInputEmail(
+fun validatingInputEmail(
     email: String,
     updateState: (String) -> Unit,
     validatorHasErrors: Boolean,
-) {
+): Boolean {
     val localFocusManager = LocalFocusManager.current
+    var isIconClicked by remember { mutableStateOf(false) }
 
     OutlinedTextField(
-        value = email,
+        value = if (isIconClicked) {""} else email,
         onValueChange = updateState,
         modifier = Modifier
             .fillMaxWidth()
@@ -67,6 +75,17 @@ fun ValidatingInputEmail(
                 contentDescription = "",
                 tint = colorResource(R.color.blue_500)
             )
+        }),
+        trailingIcon = ({
+            IconButton(onClick = {
+                isIconClicked = true
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.blue_500)
+                )
+            }
         }),
         isError = validatorHasErrors,
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -90,6 +109,7 @@ fun ValidatingInputEmail(
             focusedPlaceholderColor = colorResource(id = R.color.blue_500),
         )
     )
+    return isIconClicked
 }
 
 class EmailViewModel : ViewModel() {
@@ -108,6 +128,11 @@ class EmailViewModel : ViewModel() {
     fun updateEmail(input: String) {
         email = input
     }
+
+    fun clearEmail() {
+        email = ""
+    }
+
 }
 
 @Composable
@@ -206,5 +231,27 @@ class PasswordViewModel : ViewModel() {
     fun updatePassword(input: String) {
         password = input
         shouldValidate = true // Enable validation after the first input
+    }
+}
+
+@Composable
+fun ValidatingButton(errorButton: Boolean, textAction: String) {
+    Button(
+        onClick = { },
+        modifier = Modifier
+            .width(350.dp)
+            .height(50.dp),
+        enabled = errorButton,
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.buttonColors(
+            contentColor = Color(0xFF000000)
+        )
+    ) {
+        Text(
+            text = textAction,
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight(500)
+        )
     }
 }
