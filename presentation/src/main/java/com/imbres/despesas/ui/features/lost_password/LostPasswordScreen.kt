@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
-import com.imbres.despesas.components.PasswordViewModel
 import com.imbres.despesas.components.ValidatingInputEmail
 import kotlinx.coroutines.launch
 
@@ -43,21 +42,19 @@ fun Content(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            var emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
-            var passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
+            // vars
+            val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
             val scope = rememberCoroutineScope()
             val userDetails by dataStoreManager.getFromDataStore()
                 .collectAsState(initial = null)
             var storeEmail = ""
-            var storePassword = ""
 
             if (userDetails?.email?.isNotEmpty() == true) {
                 storeEmail = userDetails!!.email
-                storePassword = userDetails!!.password
                 emailViewModel.updateEmail((storeEmail))
-                passwordViewModel.updatePassword((storePassword))
             }
 
+            // email
             ValidatingInputEmail(
                 email = emailViewModel.email,
                 updateState = {

@@ -33,6 +33,7 @@ import com.imbres.despesas.components.PasswordViewModel
 import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ValidatingInputPassword
 import com.imbres.despesas.model.UserDetails
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -63,8 +64,9 @@ fun Content(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            var emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
-            var passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
+            // vars
+            val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
+            val passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
             val scope = rememberCoroutineScope()
             val userDetails by dataStoreManager.getFromDataStore()
                 .collectAsState(initial = null)
@@ -78,6 +80,7 @@ fun Content(
                 passwordViewModel.updatePassword((storePassword))
             }
 
+            // email
             ValidatingInputEmail(
                 email = emailViewModel.email,
                 updateState = {
@@ -96,6 +99,7 @@ fun Content(
                 validatorHasErrors = emailViewModel.emailHasErrors,
             )
 
+            // password
             ValidatingInputPassword(
                 password = passwordViewModel.password,
                 //updateState = { input -> passwordViewModel.updatePassword(input) },
@@ -115,56 +119,76 @@ fun Content(
                 validatorHasErrors = passwordViewModel.passwordHasErrors
             )
 
-            var checkedMeuUsuario by remember { mutableStateOf(false) }
-            checkedMeuUsuario = userDetails?.checked ?: false
-
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(end = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Checkbox(
-                        checked = checkedMeuUsuario,
-                        onCheckedChange = {
-                            scope.launch {
-                                dataStoreManager.saveToDataStore(
-                                    UserDetails(
-                                        checked = it,
-                                        email = if (it) emailViewModel.email else "",
-                                        password = if (it) passwordViewModel.password else ""
-                                    )
-                                )
-                            }
-                        },
-                        enabled = emailViewModel.email.isNotEmpty() && passwordViewModel.password.isNotEmpty() && !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
-                    )
-
-                    Text(
-                        text = "Lembrar meu usuário",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight(700),
-                        color = colorResource(id = R.color.blue_500),
-                        textAlign = TextAlign.Center
-                    )
-                }
-                Text(
-                    text = "Esqueci a senha",
-                    modifier = Modifier.clickable {
-                        onGoToLostPasswordScreen()
-                    },
-                    color = colorResource(id = R.color.blue_500),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight(700),
-                    textAlign = TextAlign.Start
-                )
-
-            }
+            // remember user / lost password
+            ValidatingUserAcess(
+                userDetails,
+                scope,
+                dataStoreManager,
+                emailViewModel,
+                passwordViewModel,
+                onGoToLostPasswordScreen
+            )
         }
+    }
+}
+
+@Composable
+private fun ValidatingUserAcess(
+    userDetails: UserDetails?,
+    scope: CoroutineScope,
+    dataStoreManager: DataStoreManager,
+    emailViewModel: EmailViewModel,
+    passwordViewModel: PasswordViewModel,
+    onGoToLostPasswordScreen: () -> Unit,
+) {
+    var checkedMeuUsuario by remember { mutableStateOf(false) }
+    checkedMeuUsuario = userDetails?.checked ?: false
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(end = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = checkedMeuUsuario,
+                onCheckedChange = {
+                    scope.launch {
+                        dataStoreManager.saveToDataStore(
+                            UserDetails(
+                                checked = it,
+                                email = if (it) emailViewModel.email else "",
+                                password = if (it) passwordViewModel.password else ""
+                            )
+                        )
+                    }
+                },
+                enabled = emailViewModel.email.isNotEmpty() && passwordViewModel.password.isNotEmpty() && !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
+            )
+
+            Text(
+                text = "Lembrar meu usuário",
+                fontSize = 12.sp,
+                fontWeight = FontWeight(700),
+                color = colorResource(id = R.color.blue_500),
+                textAlign = TextAlign.Center
+            )
+        }
+        Text(
+            text = "Esqueci a senha",
+            modifier = Modifier.clickable {
+                onGoToLostPasswordScreen()
+            },
+            color = colorResource(id = R.color.blue_500),
+            fontSize = 12.sp,
+            fontWeight = FontWeight(700),
+            textAlign = TextAlign.Start
+        )
+
     }
 }
 
