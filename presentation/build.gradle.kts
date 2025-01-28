@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "1.8.0"
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -53,6 +54,8 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.core)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

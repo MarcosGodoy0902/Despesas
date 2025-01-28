@@ -26,7 +26,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,7 +42,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.R
-import kotlinx.coroutines.launch
 
 /* Pesquisa:
 https://developer.android.com/develop/ui/compose/text/user-input?hl=pt-br
@@ -238,9 +236,13 @@ class PasswordViewModel : ViewModel() {
 }
 
 @Composable
-fun ValidatingButton(errorButton: Boolean, textAction: String) {
+fun ValidatingButton(
+    onClick: () -> Unit,
+    errorButton: Boolean,
+    textAction: String,
+) {
     Button(
-        onClick = { },
+        onClick = { onClick() },
         modifier = Modifier
             .width(350.dp)
             .height(50.dp),

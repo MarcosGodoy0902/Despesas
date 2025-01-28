@@ -34,6 +34,7 @@ import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ValidatingInputPassword
 import com.imbres.despesas.model.UserDetails
+import com.imbres.despesas.model.ViewModelButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -119,12 +120,20 @@ fun Content(
                 validatorHasErrors = passwordViewModel.passwordHasErrors
             )
 
-            // remember user / lost password
+            // user access
             Column(
                 Modifier
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                //  process
+                val viewModelButton: ViewModelButton = viewModel<ViewModelButton>()
+                val onClick = { viewModelButton.login(emailViewModel.email,passwordViewModel.password,) }
+                val errorButton =
+                    !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
+                ValidatingButton(onClick, errorButton, "Entrar")
+
+                // remember user / lost password
                 ValidatingUserAcess(
                     userDetails,
                     scope,
@@ -133,12 +142,6 @@ fun Content(
                     passwordViewModel,
                     onGoToLostPasswordScreen
                 )
-
-                //  process
-                val errorButton =
-                    !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
-                ValidatingButton(errorButton, "Entrar")
-
             }
         }
     }
@@ -183,7 +186,22 @@ private fun ValidatingUserAcess(
 
             Text(
                 text = "Lembrar meu usuário",
-                fontSize = 12.sp,
+                modifier = Modifier
+                    .clickable(
+                        enabled = emailViewModel.email.isNotEmpty() && passwordViewModel.password.isNotEmpty() && !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
+                    ) {
+                        checkedMeuUsuario = !checkedMeuUsuario
+                        scope.launch {
+                            dataStoreManager.saveToDataStore(
+                                UserDetails(
+                                    checked = checkedMeuUsuario,
+                                    email = if (checkedMeuUsuario) emailViewModel.email else "",
+                                    password = if (checkedMeuUsuario) passwordViewModel.password else ""
+                                )
+                            )
+                        }
+                    },
+                fontSize = 14.sp,
                 fontWeight = FontWeight(700),
                 color = colorResource(id = R.color.blue_500),
             )
@@ -196,11 +214,24 @@ private fun ValidatingUserAcess(
                     onGoToLostPasswordScreen()
                 },
             color = colorResource(id = R.color.blue_500),
-            fontSize = 12.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight(700),
             textAlign = TextAlign.Start
         )
     }
+    Text(
+        text = "Criar uma conta",
+        modifier = Modifier
+            .padding(end = 20.dp)
+            .clickable {
+                onGoToLostPasswordScreen()
+            },
+        color = colorResource(id = R.color.blue_500),
+        fontSize = 14.sp,
+        fontWeight = FontWeight(700),
+        textAlign = TextAlign.Start
+    )
+
 }
 
 @Preview(showBackground = true, showSystemUi = true)

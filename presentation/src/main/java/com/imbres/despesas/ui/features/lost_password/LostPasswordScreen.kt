@@ -14,8 +14,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
+import com.imbres.despesas.components.SnackBarDisplay
 import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
+import com.imbres.despesas.model.ViewModelButton
 import kotlinx.coroutines.launch
 
 @Composable
@@ -74,9 +76,18 @@ fun Content(
         )
 
         //  process
+        val viewModelButton: ViewModelButton = viewModel<ViewModelButton>()
+        val onClick = { viewModelButton.resendPassword(emailViewModel.email) }
         val errorButton =
             !emailViewModel.emailHasErrors
-        ValidatingButton(errorButton, "Entrar")
+        ValidatingButton(onClick, errorButton, "Entrar")
+        if (viewModelButton.lostPasswordSucess.value || viewModelButton.lostPasswordFail.value) {
+            SnackBarDisplay(
+                msg = "Instruções enviadas, caso o email esteja cadastrado.",
+                onGoBack,
+                false
+            )
+        }
     }
 }
 
