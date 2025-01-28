@@ -31,8 +31,8 @@ import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
 import com.imbres.despesas.components.PasswordViewModel
 import com.imbres.despesas.components.ValidatingButton
+import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ValidatingInputPassword
-import com.imbres.despesas.components.validatingInputEmail
 import com.imbres.despesas.model.UserDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -82,26 +82,23 @@ fun Content(
             }
 
             // email
-            if (validatingInputEmail(
-                    email = emailViewModel.email,
-                    updateState = {
-                        if (storeEmail.isNotEmpty()) {
-                            emailViewModel.updateEmail((storeEmail))
-                        } else {
+            ValidatingInputEmail(
+                email = emailViewModel.email,
+                updateState = {
+                    if (storeEmail.isNotEmpty()) {
+                        emailViewModel.updateEmail((storeEmail))
+                    } else {
+                        emailViewModel.updateEmail(it)
+                    }
+                    if (it.isEmpty() || it !== userDetails?.email) {
+                        scope.launch {
+                            dataStoreManager.clearDataStore()
                             emailViewModel.updateEmail(it)
                         }
-                        if (it.isEmpty() || it !== userDetails?.email) {
-                            scope.launch {
-                                dataStoreManager.clearDataStore()
-                                emailViewModel.updateEmail(it)
-                            }
-                        }
-                    },
-                    validatorHasErrors = emailViewModel.emailHasErrors,
-                )
-            ) {
-                emailViewModel.clearEmail()
-            }
+                    }
+                },
+                validatorHasErrors = emailViewModel.emailHasErrors,
+            )
 
             // password
             ValidatingInputPassword(

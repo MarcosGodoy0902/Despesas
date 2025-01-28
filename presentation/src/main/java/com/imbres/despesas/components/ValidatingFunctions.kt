@@ -26,6 +26,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,7 +41,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.R
+import kotlinx.coroutines.launch
 
 /* Pesquisa:
 https://developer.android.com/develop/ui/compose/text/user-input?hl=pt-br
@@ -49,16 +52,16 @@ https://github.com/android/snippets/blob/c79a414f423d09d009c92d69fb71e882e6edd39
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun validatingInputEmail(
+fun ValidatingInputEmail(
     email: String,
     updateState: (String) -> Unit,
     validatorHasErrors: Boolean,
-): Boolean {
+) {
     val localFocusManager = LocalFocusManager.current
-    var isIconClicked by remember { mutableStateOf(false) }
+    val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
 
     OutlinedTextField(
-        value = if (isIconClicked) {""} else email,
+        value = email,
         onValueChange = updateState,
         modifier = Modifier
             .fillMaxWidth()
@@ -78,7 +81,8 @@ fun validatingInputEmail(
         }),
         trailingIcon = ({
             IconButton(onClick = {
-                isIconClicked = true
+                emailViewModel.clearEmail()
+                updateState("")
             }) {
                 Icon(
                     imageVector = Icons.Default.Clear,
@@ -109,7 +113,6 @@ fun validatingInputEmail(
             focusedPlaceholderColor = colorResource(id = R.color.blue_500),
         )
     )
-    return isIconClicked
 }
 
 class EmailViewModel : ViewModel() {

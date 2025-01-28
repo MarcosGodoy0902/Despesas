@@ -15,7 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
 import com.imbres.despesas.components.ValidatingButton
-import com.imbres.despesas.components.validatingInputEmail
+import com.imbres.despesas.components.ValidatingInputEmail
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,32 +55,28 @@ fun Content(
         }
 
         // email
-        if (validatingInputEmail(
-                email = emailViewModel.email,
-                updateState = {
-                    if (storeEmail.isNotEmpty()) {
-                        emailViewModel.updateEmail((storeEmail))
-                    } else {
+        ValidatingInputEmail(
+            email = emailViewModel.email,
+            updateState = {
+                if (storeEmail.isNotEmpty()) {
+                    emailViewModel.updateEmail((storeEmail))
+                } else {
+                    emailViewModel.updateEmail(it)
+                }
+                if (it.isEmpty() || it !== userDetails?.email) {
+                    scope.launch {
+                        dataStoreManager.clearDataStore()
                         emailViewModel.updateEmail(it)
                     }
-                    if (it.isEmpty() || it !== userDetails?.email) {
-                        scope.launch {
-                            dataStoreManager.clearDataStore()
-                            emailViewModel.updateEmail(it)
-                        }
-                    }
-                },
-                validatorHasErrors = emailViewModel.emailHasErrors,
-            )
-        ) {
-            emailViewModel.updateEmail("")
-        }
+                }
+            },
+            validatorHasErrors = emailViewModel.emailHasErrors,
+        )
 
         //  process
         val errorButton =
             !emailViewModel.emailHasErrors
         ValidatingButton(errorButton, "Entrar")
-
     }
 }
 
