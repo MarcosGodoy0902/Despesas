@@ -1,10 +1,8 @@
 package com.imbres.despesas.components
 
 import android.annotation.SuppressLint
-import androidx.annotation.ColorRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
@@ -32,38 +30,27 @@ fun SnackBarDisplay(
     val scope = rememberCoroutineScope()
     val errorColor = getErrorColor(error)
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                snackbar = { snackbarData ->
-                    MyCustomSnackbar(snackbarData, Modifier, errorColor)
-                }
-            )
-        }
+    Column(
+        modifier = Modifier
     ) {
-        Column(
-            modifier = Modifier
-        ) {
-            scope.launch {
-                val result = snackbarHostState.showSnackbar(
-                    message = msg,
-                    //actionLabel = "Retry",
-                    //withDismissAction = true,
-                    duration = SnackbarDuration.Short
-                )
-                when (result) {
-                    SnackbarResult.Dismissed -> {
-                        // Ação quando o snackbar é dispensado
-                        if (!error) {
-                            //navigateToStart(navController)
-                            onGoBack()
-                        }
+        scope.launch {
+            val result = snackbarHostState.showSnackbar(
+                message = msg,
+                //actionLabel = "Retry",
+                //withDismissAction = true,
+                duration = SnackbarDuration.Short
+            )
+            when (result) {
+                SnackbarResult.Dismissed -> {
+                    // Ação quando o snackbar é dispensado
+                    if (!error) {
+                        //navigateToStart(navController)
+                        onGoBack()
                     }
+                }
 
-                    SnackbarResult.ActionPerformed -> {
-                        // Ação quando o botão "Retry" é pressionado
-                    }
+                SnackbarResult.ActionPerformed -> {
+                    // Ação quando o botão "Retry" é pressionado
                 }
             }
         }
@@ -103,6 +90,7 @@ fun SnackBarDisplay(
     }
 }
 
+
 @Composable
 private fun getErrorColor(error: Boolean): Color {
     return if (error) Color.Red else colorResource(id = R.color.blue_500)
@@ -115,17 +103,17 @@ private fun MyCustomSnackbar(
     errorColor: Color,
 ) {
     Snackbar(
-        modifier = modifier.padding(10.dp),
+        modifier = modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp),
         containerColor = errorColor,
         action = {
             snackbarData.visuals.actionLabel?.let { actionLabel ->
                 TextButton(onClick = { snackbarData.dismiss() }) {
-                    Text(text = actionLabel, color =Color.White)
+                    Text(text = actionLabel, color = Color.White)
                 }
             }
         }
     ) {
-        Text(text = snackbarData.visuals.message, color =Color.White)
+        Text(text = snackbarData.visuals.message, color = Color.White)
     }
 }
 

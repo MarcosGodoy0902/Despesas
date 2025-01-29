@@ -30,6 +30,7 @@ import com.imbres.despesas.R
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
 import com.imbres.despesas.components.PasswordViewModel
+import com.imbres.despesas.components.SnackBarDisplay
 import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ValidatingInputPassword
@@ -128,21 +129,43 @@ fun Content(
             ) {
                 //  process
                 val viewModelButton: ViewModelButton = viewModel<ViewModelButton>()
-                val onClick = { viewModelButton.login(emailViewModel.email,passwordViewModel.password,) }
+                val onClick = {
+                    viewModelButton.login(
+                        emailViewModel.email,
+                        passwordViewModel.password,
+                        "Marcos"
+                    )
+                }
                 val errorButton =
                     !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
                 ValidatingButton(onClick, errorButton, "Entrar")
 
-                // remember user / lost password
-                ValidatingUserAcess(
-                    userDetails,
-                    scope,
-                    dataStoreManager,
-                    emailViewModel,
-                    passwordViewModel,
-                    onGoToLostPasswordScreen
-                )
+                if (viewModelButton.signUpSucess.value || viewModelButton.signUpFail.value) {
+                    SnackBarDisplay(
+                        msg = "Conta criada com sucesso!",
+                        onGoBack,
+                        false
+                    )
+                } else {
+                    if (viewModelButton.signUpUserExists.value) {
+                        SnackBarDisplay(
+                            msg = "E-mail informado já está em uso.",
+                            onGoBack,
+                            true
+                        )
+                    }
+                }
             }
+
+            // remember user / lost password
+            ValidatingUserAcess(
+                userDetails,
+                scope,
+                dataStoreManager,
+                emailViewModel,
+                passwordViewModel,
+                onGoToLostPasswordScreen
+            )
         }
     }
 }

@@ -81,6 +81,7 @@ fun Content(
         val errorButton =
             !emailViewModel.emailHasErrors
         ValidatingButton(onClick, errorButton, "Entrar")
+
         if (viewModelButton.lostPasswordSucess.value || viewModelButton.lostPasswordFail.value) {
             SnackBarDisplay(
                 msg = "Instruções enviadas, caso o email esteja cadastrado.",
