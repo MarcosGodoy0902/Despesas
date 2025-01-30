@@ -40,12 +40,11 @@ fun Navigation(
         }
         composable<Screen.SignUp> {
             SignUpScreen(
-                dataStoreManager,
                 onGoBack = {
                     navController.popBackStack()
                 },
-                onGoToLostPasswordScreen = {
-                    navController.navigate(Screen.LostPassword)
+                onGoToSignInScreen = {
+                    navController.navigate(Screen.SignIn)
                 }
             )
         }

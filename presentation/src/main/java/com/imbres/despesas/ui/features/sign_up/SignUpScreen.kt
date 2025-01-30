@@ -41,22 +41,19 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
-    dataStoreManager: DataStoreManager,
     onGoBack: () -> Boolean,
-    onGoToLostPasswordScreen: () -> Unit,
+    onGoToSignInScreen: () -> Unit,
 ) {
     Content(
-        dataStoreManager,
         onGoBack,
-        onGoToLostPasswordScreen
+        onGoToSignInScreen
     )
 }
 
 @Composable
 fun Content(
-    dataStoreManager: DataStoreManager,
     onGoBack: () -> Boolean,
-    onGoToLostPasswordScreen: () -> Unit,
+    onGoToSignInScreen: () -> Unit,
 ) {
     Column {
         Column(
@@ -67,18 +64,8 @@ fun Content(
             // vars
             val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
             val passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
-            val scope = rememberCoroutineScope()
-            val userDetails by dataStoreManager.getFromDataStore()
-                .collectAsState(initial = null)
             var storeEmail = ""
             var storePassword = ""
-
-            if (userDetails?.email?.isNotEmpty() == true) {
-                storeEmail = userDetails!!.email
-                storePassword = userDetails!!.password
-                emailViewModel.updateEmail((storeEmail))
-                passwordViewModel.updatePassword((storePassword))
-            }
 
             // email
             ValidatingInputEmail(
@@ -88,12 +75,6 @@ fun Content(
                         emailViewModel.updateEmail((storeEmail))
                     } else {
                         emailViewModel.updateEmail(it)
-                    }
-                    if (it.isEmpty() || it !== userDetails?.email) {
-                        scope.launch {
-                            dataStoreManager.clearDataStore()
-                            emailViewModel.updateEmail(it)
-                        }
                     }
                 },
                 validatorHasErrors = emailViewModel.emailHasErrors,
@@ -107,12 +88,6 @@ fun Content(
                         passwordViewModel.updatePassword((storePassword))
                     } else {
                         passwordViewModel.updatePassword(it)
-                    }
-                    if (it.isEmpty() || it !== userDetails?.password) {
-                        scope.launch {
-                            dataStoreManager.clearDataStore()
-                            passwordViewModel.updatePassword(it)
-                        }
                     }
                 },
                 validatorHasErrors = passwordViewModel.passwordHasErrors
@@ -135,7 +110,7 @@ fun Content(
                 }
                 val errorButton =
                     !emailViewModel.emailHasErrors && emailViewModel.email.isNotEmpty() && !passwordViewModel.passwordHasErrors && passwordViewModel.password.isNotEmpty()
-                ValidatingButton(onClick, errorButton, "Entrar")
+                ValidatingButton(onClick, errorButton, "Continuar")
 
                 if (viewModelButton.signUpSucess.value || viewModelButton.signUpFail.value) {
                     SnackBarDisplay(
@@ -161,8 +136,8 @@ fun Content(
 @Composable
 fun Preview() {
     SignUpScreen(
-        dataStoreManager = DataStoreManager(LocalContext.current),
+        //dataStoreManager = DataStoreManager(LocalContext.current),
         onGoBack = { true },
-        onGoToLostPasswordScreen = {}
+        onGoToSignInScreen = {}
     )
 }
