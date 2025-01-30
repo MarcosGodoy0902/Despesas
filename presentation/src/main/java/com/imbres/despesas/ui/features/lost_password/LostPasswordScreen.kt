@@ -17,7 +17,7 @@ import com.imbres.despesas.components.EmailViewModel
 import com.imbres.despesas.components.SnackBarDisplay
 import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
-import com.imbres.despesas.model.ViewModelButton
+import com.imbres.despesas.components.ViewModelButton
 import kotlinx.coroutines.launch
 
 @Composable

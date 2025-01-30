@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowInsetsControllerCompat
 import com.imbres.despesas.components.DataStoreManager
+import com.imbres.despesas.components.IsRegistered
 import com.imbres.despesas.components.preferencesDataStore
 import com.imbres.despesas.navigation.Navigation
 import com.imbres.despesas.ui.theme.DespesasTheme
-import com.imbres.despesas.utils.IsRegistered
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

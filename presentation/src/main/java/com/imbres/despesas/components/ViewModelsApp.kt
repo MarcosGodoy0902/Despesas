@@ -1,4 +1,4 @@
-package com.imbres.despesas.model
+package com.imbres.despesas.components
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -20,10 +20,6 @@ class ViewModelButton : ViewModel() {
     val lostPasswordInProgress = mutableStateOf(true)
     val lostPasswordSucess = mutableStateOf(false)
     val lostPasswordFail = mutableStateOf(false)
-
-    /*    fun login(email: String, password: String) {
-            val userDataDocument: MutableState<QueryDocumentSnapshot?> = mutableStateOf(null)
-        }*/
 
     fun login(emailNewUser: String, passwordNewUser: String, nameNewUser: String) {
         val userDataDocument: MutableState<QueryDocumentSnapshot?> = mutableStateOf(null)

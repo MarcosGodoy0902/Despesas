@@ -34,8 +34,8 @@ import com.imbres.despesas.components.SnackBarDisplay
 import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ValidatingInputPassword
+import com.imbres.despesas.components.ViewModelButton
 import com.imbres.despesas.model.UserDetails
-import com.imbres.despesas.model.ViewModelButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -137,7 +137,7 @@ fun Content(
                     )
                 }
                 val errorButton =
-                    !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
+                    !emailViewModel.emailHasErrors && emailViewModel.email.isNotEmpty() && !passwordViewModel.passwordHasErrors && passwordViewModel.password.isNotEmpty()
                 ValidatingButton(onClick, errorButton, "Entrar")
 
                 if (viewModelButton.signUpSucess.value || viewModelButton.signUpFail.value) {

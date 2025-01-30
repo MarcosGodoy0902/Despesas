@@ -133,7 +133,6 @@ class EmailViewModel : ViewModel() {
     fun clearEmail() {
         email = ""
     }
-
 }
 
 @Composable

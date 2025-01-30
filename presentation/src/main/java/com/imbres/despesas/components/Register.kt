@@ -1,4 +1,4 @@
-package com.imbres.despesas.utils
+package com.imbres.despesas.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,7 +9,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.DataStoreManager.Companion.EMAIL
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
