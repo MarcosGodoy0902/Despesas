@@ -1,4 +1,4 @@
-package com.imbres.despesas.ui.features.sign_in
+package com.imbres.despesas.ui.features.sign_up
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,16 +40,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignInScreen(
+fun SignUpScreen(
     dataStoreManager: DataStoreManager,
     onGoBack: () -> Boolean,
-    onGoToSignUpScreen: () -> Unit,
     onGoToLostPasswordScreen: () -> Unit,
 ) {
     Content(
         dataStoreManager,
         onGoBack,
-        onGoToSignUpScreen,
         onGoToLostPasswordScreen
     )
 }
@@ -58,7 +56,6 @@ fun SignInScreen(
 fun Content(
     dataStoreManager: DataStoreManager,
     onGoBack: () -> Boolean,
-    onGoToSignUpScreen: () -> Unit,
     onGoToLostPasswordScreen: () -> Unit,
 ) {
     Column {
@@ -156,116 +153,16 @@ fun Content(
                     }
                 }
             }
-
-            // remember user / lost password
-            ValidatingUserAcess(
-                userDetails,
-                scope,
-                dataStoreManager,
-                emailViewModel,
-                passwordViewModel,
-                onGoToSignUpScreen,
-                onGoToLostPasswordScreen
-            )
         }
     }
-}
-
-@Composable
-private fun ValidatingUserAcess(
-    userDetails: UserDetails?,
-    scope: CoroutineScope,
-    dataStoreManager: DataStoreManager,
-    emailViewModel: EmailViewModel,
-    passwordViewModel: PasswordViewModel,
-    onGoToSignUpScreen: () -> Unit,
-    onGoToLostPasswordScreen: () -> Unit,
-) {
-    var checkedMeuUsuario by remember { mutableStateOf(false) }
-    checkedMeuUsuario = userDetails?.checked ?: false
-
-    Row(
-        Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = checkedMeuUsuario,
-                onCheckedChange = {
-                    scope.launch {
-                        dataStoreManager.saveToDataStore(
-                            UserDetails(
-                                checked = it,
-                                email = if (it) emailViewModel.email else "",
-                                password = if (it) passwordViewModel.password else ""
-                            )
-                        )
-                    }
-                },
-                enabled = emailViewModel.email.isNotEmpty() && passwordViewModel.password.isNotEmpty() && !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
-            )
-
-            Text(
-                text = "Lembrar meu usuário",
-                modifier = Modifier
-                    .clickable(
-                        enabled = emailViewModel.email.isNotEmpty() && passwordViewModel.password.isNotEmpty() && !emailViewModel.emailHasErrors && !passwordViewModel.passwordHasErrors
-                    ) {
-                        checkedMeuUsuario = !checkedMeuUsuario
-                        scope.launch {
-                            dataStoreManager.saveToDataStore(
-                                UserDetails(
-                                    checked = checkedMeuUsuario,
-                                    email = if (checkedMeuUsuario) emailViewModel.email else "",
-                                    password = if (checkedMeuUsuario) passwordViewModel.password else ""
-                                )
-                            )
-                        }
-                    },
-                fontSize = 14.sp,
-                fontWeight = FontWeight(700),
-                color = colorResource(id = R.color.blue_500),
-            )
-        }
-        Text(
-            text = "Esqueci a senha",
-            modifier = Modifier
-                .padding(end = 20.dp)
-                .clickable {
-                    onGoToLostPasswordScreen()
-                },
-            color = colorResource(id = R.color.blue_500),
-            fontSize = 14.sp,
-            fontWeight = FontWeight(700),
-            textAlign = TextAlign.Start
-        )
-    }
-    Text(
-        text = "Criar uma conta",
-        modifier = Modifier
-            .padding(end = 20.dp)
-            .clickable {
-                onGoToSignUpScreen()
-            },
-        color = colorResource(id = R.color.blue_500),
-        fontSize = 14.sp,
-        fontWeight = FontWeight(700),
-        textAlign = TextAlign.Start
-    )
-
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun Preview() {
-    SignInScreen(
+    SignUpScreen(
         dataStoreManager = DataStoreManager(LocalContext.current),
         onGoBack = { true },
-        onGoToSignUpScreen = {},
         onGoToLostPasswordScreen = {}
     )
 }

@@ -6,6 +6,9 @@ sealed interface Screen {
     data object Splash : Screen
 
     @kotlinx.serialization.Serializable
+    data object SignUp : Screen
+
+    @kotlinx.serialization.Serializable
     data object SignIn : Screen
 
     @kotlinx.serialization.Serializable

@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.ui.features.lost_password.LostPasswordScreen
 import com.imbres.despesas.ui.features.sign_in.SignInScreen
+import com.imbres.despesas.ui.features.sign_up.SignUpScreen
 import com.imbres.despesas.ui.features.splash.SplashApp
 import com.imbres.despesas.utils.Screen
 
@@ -37,19 +38,29 @@ fun Navigation(
                 }
             )
         }
+        composable<Screen.SignUp> {
+            SignUpScreen(
+                dataStoreManager,
+                onGoBack = {
+                    navController.popBackStack()
+                },
+                onGoToLostPasswordScreen = {
+                    navController.navigate(Screen.LostPassword)
+                }
+            )
+        }
         composable<Screen.SignIn> {
             SignInScreen(
                 dataStoreManager,
                 onGoBack = {
                     navController.popBackStack()
                 },
-                onGoToSignInScreen = {
-                    navController.popBackStack()
+                onGoToSignUpScreen = {
+                    navController.navigate(Screen.SignUp)
                 },
                 onGoToLostPasswordScreen = {
                     navController.navigate(Screen.LostPassword)
                 }
-
             )
         }
         composable<Screen.LostPassword> {
