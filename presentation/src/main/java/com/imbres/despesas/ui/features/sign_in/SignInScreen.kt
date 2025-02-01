@@ -130,21 +130,22 @@ fun Content(
                 //  process
                 val viewModelButton: ViewModelButton = viewModel<ViewModelButton>()
                 val onClick = {
-                    viewModelButton.login(
+                    viewModelButton.signInUp(
                         emailViewModel.email,
                         passwordViewModel.password,
-                        "Marcos"
+                        "Marcos",
+                        false
                     )
                 }
                 val errorButton =
                     !emailViewModel.emailHasErrors && emailViewModel.email.isNotEmpty() && !passwordViewModel.passwordHasErrors && passwordViewModel.password.isNotEmpty()
                 ValidatingButton(onClick, errorButton, "Entrar")
 
-                if (viewModelButton.signUpSucess.value || viewModelButton.signUpFail.value) {
+                if (viewModelButton.signUpUserInvalidCredentials.value) {
                     SnackBarDisplay(
-                        msg = "Conta criada com sucesso!",
+                        msg = "E-mail e/ou senha inválidos!",
                         onGoBack,
-                        false
+                        true
                     )
                 } else {
                     if (viewModelButton.signUpUserExists.value) {

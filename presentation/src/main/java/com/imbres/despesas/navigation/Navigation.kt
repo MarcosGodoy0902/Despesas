@@ -2,6 +2,8 @@ package com.imbres.despesas.navigation
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -21,58 +23,60 @@ fun Navigation(
 ) {
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Splash,
-        enterTransition = { slideInHorizontally { it } },
-        exitTransition = { slideOutHorizontally { -it } },
-        popEnterTransition = { slideInHorizontally { -it } },
-        popExitTransition = { slideOutHorizontally { it } }
-    ) {
-        composable<Screen.Splash> {
-            SplashApp(
-                dataStoreManager,
-                onGoToNextScreen = {
-                    navController.popBackStack()
-                    navController.navigate(Screen.SignIn)
-                }
-            )
-        }
-        composable<Screen.SignUp> {
-            SignUpScreen(
-                onGoBack = {
-                    navController.popBackStack()
-                },
-                onGoToSignInScreen = {
-                    navController.navigate(Screen.SignIn)
-                }
-            )
-        }
-        composable<Screen.SignIn> {
-            SignInScreen(
-                dataStoreManager,
-                onGoBack = {
-                    navController.popBackStack()
-                },
-                onGoToSignUpScreen = {
-                    navController.navigate(Screen.SignUp)
-                },
-                onGoToLostPasswordScreen = {
-                    navController.navigate(Screen.LostPassword)
-                }
-            )
-        }
-        composable<Screen.LostPassword> {
-            LostPasswordScreen(
-                dataStoreManager,
-                onGoBack = {
-                    navController.popBackStack()
-                },
-                onGoToLostPasswordScreen = {
-                    navController.popBackStack()
-                    //navController.navigate(Screen.LostPasswordScreen)
-                }
-            )
+    Scaffold(
+
+    ) { contentPadding ->
+        NavHost(
+            modifier = modifier.padding(contentPadding),
+            navController = navController,
+            startDestination = Screen.Splash,
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
+        ) {
+            composable<Screen.Splash> {
+                SplashApp(
+                    dataStoreManager,
+                    onGoToNextScreen = {
+                        navController.popBackStack()
+                        navController.navigate(Screen.SignIn)
+                    }
+                )
+            }
+            composable<Screen.SignUp> {
+                SignUpScreen(
+                    onGoBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+            composable<Screen.SignIn> {
+                SignInScreen(
+                    dataStoreManager,
+                    onGoBack = {
+                        navController.popBackStack()
+                    },
+                    onGoToSignUpScreen = {
+                        navController.navigate(Screen.SignUp)
+                    },
+                    onGoToLostPasswordScreen = {
+                        navController.navigate(Screen.LostPassword)
+                    }
+                )
+            }
+            composable<Screen.LostPassword> {
+                LostPasswordScreen(
+                    dataStoreManager,
+                    onGoBack = {
+                        navController.popBackStack()
+                    },
+                    onGoToLostPasswordScreen = {
+                        navController.popBackStack()
+                        //navController.navigate(Screen.LostPasswordScreen)
+                    }
+                )
+            }
         }
     }
 }
