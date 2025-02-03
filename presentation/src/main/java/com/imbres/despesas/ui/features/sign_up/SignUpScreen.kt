@@ -1,6 +1,5 @@
 package com.imbres.despesas.ui.features.sign_up
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +40,6 @@ fun Content(
             // vars
             val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
             val passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
-            val scope = rememberCoroutineScope()
             var storeEmail = ""
             var storePassword = ""
 
@@ -77,32 +75,35 @@ fun Content(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //  process
+                //  vars
                 val viewModelButton: ViewModelButton = viewModel<ViewModelButton>()
                 val onClick = {
                     viewModelButton.signInUp(
                         emailViewModel.email,
                         passwordViewModel.password,
-                        "Marcos",
+                        "",
                         true
                     )
                 }
                 val errorButton =
                     !emailViewModel.emailHasErrors && emailViewModel.email.isNotEmpty() && !passwordViewModel.passwordHasErrors && passwordViewModel.password.isNotEmpty()
+
+                //  process
                 ValidatingButton(onClick, errorButton, "Continuar")
 
                 when {
+                    viewModelButton.signUpUserExists.value -> SnackBarDisplay(
+                        msg = "E-mail informado já está em uso.",
+                        onGoBack,
+                        true
+                    )
+
                     viewModelButton.signUpFail.value -> SnackBarDisplay(
                         msg = "Falha ou erro desconhecido.",
                         onGoBack,
                         true
                     )
 
-                    viewModelButton.signUpUserExists.value -> SnackBarDisplay(
-                        msg = "E-mail informado já está em uso.",
-                        onGoBack,
-                        true
-                    )
 
                     viewModelButton.signUpSucess.value -> SnackBarDisplay(
                         msg = "Conta criada com sucesso!",
