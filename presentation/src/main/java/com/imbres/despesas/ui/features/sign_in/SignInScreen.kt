@@ -141,21 +141,27 @@ fun Content(
                     !emailViewModel.emailHasErrors && emailViewModel.email.isNotEmpty() && !passwordViewModel.passwordHasErrors && passwordViewModel.password.isNotEmpty()
                 ValidatingButton(onClick, errorButton, "Entrar")
 
-                if (viewModelButton.signUpUserInvalidCredentials.value) {
-                    SnackBarDisplay(
+                when {
+                    viewModelButton.signUpUserInvalidCredentials.value -> SnackBarDisplay(
                         msg = "E-mail e/ou senha inválidos!",
                         onGoBack,
                         true
                     )
-                } else {
-                    if (viewModelButton.signUpUserExists.value) {
-                        SnackBarDisplay(
-                            msg = "E-mail informado já está em uso.",
-                            onGoBack,
-                            true
-                        )
-                    }
+
+                    viewModelButton.signUpFail.value -> SnackBarDisplay(
+                        msg = "Falha ou erro desconhecido.",
+                        onGoBack,
+                        true
+                    )
+
+                    viewModelButton.signUpUserExists.value -> SnackBarDisplay(
+                        msg = "Acessar tela interna - dados ok.",
+                        onGoBack,
+                        false
+                    )
                 }
+
+
             }
 
             // remember user / lost password

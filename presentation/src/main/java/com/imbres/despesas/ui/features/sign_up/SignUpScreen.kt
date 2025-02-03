@@ -1,5 +1,6 @@
 package com.imbres.despesas.ui.features.sign_up
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -90,20 +91,24 @@ fun Content(
                     !emailViewModel.emailHasErrors && emailViewModel.email.isNotEmpty() && !passwordViewModel.passwordHasErrors && passwordViewModel.password.isNotEmpty()
                 ValidatingButton(onClick, errorButton, "Continuar")
 
-                if (viewModelButton.signUpSucess.value) {
-                    SnackBarDisplay(
+                when {
+                    viewModelButton.signUpFail.value -> SnackBarDisplay(
+                        msg = "Falha ou erro desconhecido.",
+                        onGoBack,
+                        true
+                    )
+
+                    viewModelButton.signUpUserExists.value -> SnackBarDisplay(
+                        msg = "E-mail informado já está em uso.",
+                        onGoBack,
+                        true
+                    )
+
+                    viewModelButton.signUpSucess.value -> SnackBarDisplay(
                         msg = "Conta criada com sucesso!",
                         onGoBack,
                         false
                     )
-                } else {
-                    if (viewModelButton.signUpUserExists.value) {
-                        SnackBarDisplay(
-                            msg = "Falha ou erro desconhecido.",
-                            onGoBack,
-                            true
-                        )
-                    }
                 }
             }
         }

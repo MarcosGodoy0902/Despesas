@@ -5,13 +5,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.firestore.firestore
 
 class ViewModelButton : ViewModel() {
     val signUpInProgress = mutableStateOf(true)
@@ -32,6 +33,66 @@ class ViewModelButton : ViewModel() {
     ) {
         val userDataDocument: MutableState<QueryDocumentSnapshot?> = mutableStateOf(null)
 
+        if (signUp) {
+            userExist(emailNewUser)
+            if (!signUpUserExists.value)
+                createUserInFirebase(
+                    email = emailNewUser,
+                    password = passwordNewUser,
+                    name = nameNewUser,
+                )
+        } else {
+            if (emailNewUser.isNotEmpty() || passwordNewUser.isNotEmpty() || nameNewUser.isNotEmpty()) {
+                FirebaseAuth
+                    .getInstance()
+                    .signInWithEmailAndPassword(emailNewUser, passwordNewUser)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            signUpInProgress.value = false
+                            signUpUserExists.value = true
+                            signUpFail.value = false
+                            signUpUserInvalidCredentials.value = false
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        when (exception) {
+                            is FirebaseAuthInvalidCredentialsException -> {
+                                // Credenciais inválidas
+                                signUpInProgress.value = false
+                                signUpUserInvalidCredentials.value = true
+                            }
+
+                            is FirebaseAuthInvalidUserException -> {
+                                // Usuário não encontrado
+                                signUpInProgress.value = false
+                                signUpFail.value = true
+                            }
+
+                            is FirebaseAuthException -> {
+                                // Outro erro de autenticação
+                                signUpInProgress.value = false
+                                signUpFail.value = true
+                            }
+
+                            else -> {
+                                // Outro tipo de erro
+                                signUpInProgress.value = false
+                                signUpFail.value = true
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    fun signInUp2(
+        emailNewUser: String,
+        passwordNewUser: String,
+        nameNewUser: String,
+        signUp: Boolean,
+    ) {
+        val userDataDocument: MutableState<QueryDocumentSnapshot?> = mutableStateOf(null)
+
         if (emailNewUser.isNotEmpty() || passwordNewUser.isNotEmpty() || nameNewUser.isNotEmpty()) {
             FirebaseAuth
                 .getInstance()
@@ -44,18 +105,16 @@ class ViewModelButton : ViewModel() {
                         signUpUserInvalidCredentials.value = false
                     } else {
                         if (signUp) {
+                            userExist(emailNewUser)
                             createUserInFirebase(
                                 email = emailNewUser,
                                 password = passwordNewUser,
                                 name = nameNewUser,
                             )
-                        } else {
-                            userExist(emailNewUser)
                         }
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Log.d("SignIn exception ", "$exception")
                     when (exception) {
                         is FirebaseAuthInvalidCredentialsException -> {
                             // Credenciais inválidas
@@ -96,22 +155,32 @@ class ViewModelButton : ViewModel() {
         }
     }
 
-    fun userExist(email: String) {
-        val credential = EmailAuthProvider.getCredential(email, "asdfA1234")
-        val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    fun userExist(emailUser: String) {
+        val db = Firebase.firestore
 
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = task.result?.user
-                    signUpUserExists.value = true
-                } else {
-                    val errorCode = task.exception
-                    signUpUserExists.value = false
+        db.collection("users") // Substitua "users" pelo nome da sua coleção
+            .whereEqualTo("email", emailUser) // Filtra documentos com o email fornecido
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val email =
+                        document.getString("email") // Substitua "nome" pelo nome do seu campo
+                    if (email != null) {
+                        // E-mail já cadastrado
+                        Log.d("SignUp exception ", "E-mail já cadastrado / nome: $email")
+                        signUpUserExists.value = true
+                    }
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d("Sign exception ", "$exception")
+                // Erro ao verificar e-mail
+                Log.d("SignUp exception ", "erro ao verificar e-mail")
+                signUpFail.value = true
+            }
+            .addOnCompleteListener { exception ->
+                // Prosseguir com cadastro
+                Log.d("SignUp exception ", "$exception")
+                signUpUserExists.value = false
             }
     }
 
