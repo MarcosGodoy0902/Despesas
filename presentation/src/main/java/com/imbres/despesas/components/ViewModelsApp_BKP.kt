@@ -9,10 +9,9 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
 
-class ViewModelButton : ViewModel() {
+class ViewModelButton_BKP : ViewModel() {
     val signUpInProgress = mutableStateOf(true)
     val signUpSucess = mutableStateOf(false)
     val signUpUserExists = mutableStateOf(false)
@@ -36,7 +35,7 @@ class ViewModelButton : ViewModel() {
                 name = nameNewUser
             )
         } else {
-            if (emailNewUser.isNotEmpty() || passwordNewUser.isNotEmpty()) {
+            if (emailNewUser.isNotEmpty() || passwordNewUser.isNotEmpty() || nameNewUser.isNotEmpty()) {
                 FirebaseAuth
                     .getInstance()
                     .signInWithEmailAndPassword(emailNewUser, passwordNewUser)
@@ -44,6 +43,8 @@ class ViewModelButton : ViewModel() {
                         if (it.isSuccessful) {
                             signUpInProgress.value = false
                             signUpUserExists.value = true
+                            signUpFail.value = false
+                            signUpUserInvalidCredentials.value = false
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -62,11 +63,6 @@ class ViewModelButton : ViewModel() {
 
                             is FirebaseAuthException -> {
                                 // Outro erro de autenticação
-                                signUpInProgress.value = false
-                                signUpFail.value = true
-                            }
-
-                            is FirebaseFirestoreException -> {
                                 signUpInProgress.value = false
                                 signUpFail.value = true
                             }

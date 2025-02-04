@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,7 +19,16 @@ import com.imbres.despesas.components.ValidatingInputPassword
 import com.imbres.despesas.components.ViewModelButton
 
 @Composable
-fun SignUpScreen(
+fun SignUpScreen_BKP(
+    onGoBack: () -> Boolean,
+) {
+    Content_BKP(
+        onGoBack,
+    )
+}
+
+@Composable
+fun Content_BKP(
     onGoBack: () -> Boolean,
 ) {
     Column {
@@ -108,8 +118,8 @@ fun SignUpScreen(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Preview() {
-    SignUpScreen(
+fun Preview_BKP() {
+    SignUpScreen_BKP(
         onGoBack = { true },
     )
 }
