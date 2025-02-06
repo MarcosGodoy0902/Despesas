@@ -83,11 +83,11 @@ fun Content(
         ValidatingButton(onClick, errorButton, "Entrar")
 
         if (viewModelButton.lostPasswordSucess.value || viewModelButton.lostPasswordFail.value) {
-            SnackBarDisplay(
+            /*SnackBarDisplay(
                 msg = "Instruções enviadas, caso o email esteja cadastrado.",
                 onGoBack,
                 false
-            )
+            )*/
         }
     }
 }

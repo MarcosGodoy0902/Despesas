@@ -81,6 +81,7 @@ fun SignUpScreen(
                 //  process
                 ValidatingButton(onClick, errorButton, "Continuar")
 
+/*
                 when {
                     viewModelButton.signUpUserExists.value -> SnackBarDisplay(
                         msg = "E-mail informado já está em uso.",
@@ -101,6 +102,7 @@ fun SignUpScreen(
                         false
                     )
                 }
+*/
             }
         }
     }

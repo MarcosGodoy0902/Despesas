@@ -1,103 +1,63 @@
 package com.imbres.despesas.components
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Column
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.imbres.despesas.R
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SnackBarDisplay(
-    msg: String, onGoBack: () -> Boolean, error: Boolean,
+    statusMsg: String,
+    scope: CoroutineScope,
+    snackbarHostState: SnackbarHostState,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val errorColor = getErrorColor(error)
-
-    Column(
-        modifier = Modifier
-    ) {
+    if (statusMsg.isNotEmpty()) {
         scope.launch {
             val result = snackbarHostState.showSnackbar(
-                message = msg,
-                //actionLabel = "Retry",
-                //withDismissAction = true,
-                duration = SnackbarDuration.Short
+                message = statusMsg,
+                actionLabel = "OK",
+                duration = SnackbarDuration.Short,
             )
             when (result) {
                 SnackbarResult.Dismissed -> {
-                    // Ação quando o snackbar é dispensado
-                    if (!error) {
-                        //navigateToStart(navController)
-                        onGoBack()
-                    }
+                    Log.d("SNACKBAR", "Dismissed")
+                    //statusMsg = ""
                 }
 
                 SnackbarResult.ActionPerformed -> {
-                    // Ação quando o botão "Retry" é pressionado
-                }
-            }
-        }
-    }
-
-    SnackbarHost(
-        hostState = snackbarHostState,
-        snackbar = { snackbarData ->
-            MyCustomSnackbar(snackbarData, Modifier, errorColor)
-        }
-    )
-
-    Column(
-        modifier = Modifier
-    ) {
-        scope.launch {
-            val result = snackbarHostState.showSnackbar(
-                message = msg,
-                //actionLabel = "Retry",
-                //withDismissAction = true,
-                duration = SnackbarDuration.Short
-            )
-            when (result) {
-                SnackbarResult.Dismissed -> {
-                    // Ação quando o snackbar é dispensado
-                    if (!error) {
-                        //navigateToStart(navController)
-                        onGoBack()
-                    }
-                }
-
-                SnackbarResult.ActionPerformed -> {
-                    // Ação quando o botão "Retry" é pressionado
+                    Log.d(
+                        "SNACKBAR",
+                        "UNDO CLICKED"
+                    )
+                    //statusMsg = ""
                 }
             }
         }
     }
 }
 
-
 @Composable
-private fun getErrorColor(error: Boolean): Color {
+fun getErrorColor(error: Boolean): Color {
     return if (error) Color.Red else colorResource(id = R.color.blue_500)
 }
 
 @Composable
-private fun MyCustomSnackbar(
+fun MyCustomSnackbar(
     snackbarData: SnackbarData,
     modifier: Modifier = Modifier,
     errorColor: Color,
@@ -116,4 +76,3 @@ private fun MyCustomSnackbar(
         Text(text = snackbarData.visuals.message, color = Color.White)
     }
 }
-

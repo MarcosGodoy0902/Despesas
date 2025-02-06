@@ -1,7 +1,6 @@
 package com.imbres.despesas.ui.features.sign_in
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,14 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarData
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +22,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,11 +33,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.R
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
+import com.imbres.despesas.components.MyCustomSnackbar
 import com.imbres.despesas.components.PasswordViewModel
+import com.imbres.despesas.components.SnackBarDisplay
 import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ValidatingInputPassword
 import com.imbres.despesas.components.ViewModelButton
+import com.imbres.despesas.components.getErrorColor
 import com.imbres.despesas.model.UserDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -77,7 +73,7 @@ fun SignInScreen(
     var storeEmail = ""
     var storePassword = ""
     val snackbarHostState = remember { SnackbarHostState() }
-    var errorColor = colorResource(id = R.color.blue_500)
+    var errorColor = getErrorColor(false)
 
     Scaffold(
         modifier = Modifier,
@@ -152,13 +148,13 @@ fun SignInScreen(
                 when {
                     viewModelButton.signUpUserInvalidCredentials.value -> {
                         statusMsg = "E-mail e/ou senha inválidos!"
-                        errorColor = Color.Red
+                        errorColor = getErrorColor(true)
                         viewModelButton.signUpUserInvalidCredentials.value = false
                     }
 
                     viewModelButton.signUpFail.value -> {
                         statusMsg = "Falha ou erro desconhecido."
-                        errorColor = Color.Red
+                        errorColor = getErrorColor(true)
                         viewModelButton.signUpFail.value = false
                     }
 
@@ -168,67 +164,7 @@ fun SignInScreen(
                     }
                 }
 
-                if (statusMsg.isNotEmpty()) {
-                    scope.launch {
-                        val result = snackbarHostState.showSnackbar(
-                            message = statusMsg,
-                            actionLabel = "OK",
-                            duration = SnackbarDuration.Short,
-                        )
-                        when (result) {
-                            SnackbarResult.Dismissed -> {
-                                Log.d("SNACKBAR", "Dismissed")
-                                //viewModelButton.signUpUserExists.value = false
-                                statusMsg = ""
-                            }
-
-                            SnackbarResult.ActionPerformed -> {
-                                Log.d(
-                                    "SNACKBAR",
-                                    "UNDO CLICKED"
-                                )
-                                //viewModelButton.signUpUserExists.value = false
-                                statusMsg = ""
-                            }
-                        }
-                    }
-
-                    SnackbarHost(
-                        hostState = snackbarHostState,
-                        snackbar = { snackbarData ->
-                            MyCustomSnackbar(snackbarData, Modifier, errorColor)
-                        }
-                    )
-                }
-
-                /*
-                                if (statusMsg.isNotEmpty()) {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar(
-                                            message = statusMsg,
-                                            actionLabel = "OK",
-                                            duration = SnackbarDuration.Short,
-                                        ).run {
-                                            when (this) {
-                                                SnackbarResult.Dismissed -> {
-                                                    Log.d("SNACKBAR", "Dismissed")
-                                                    //viewModelButton.signUpUserExists.value = false
-                                                    statusMsg = ""
-                                                }
-
-                                                SnackbarResult.ActionPerformed -> {
-                                                    Log.d(
-                                                        "SNACKBAR",
-                                                        "UNDO CLICKED"
-                                                    )
-                                                    //viewModelButton.signUpUserExists.value = false
-                                                    statusMsg = ""
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                */
+                SnackBarDisplay(statusMsg, scope, snackbarHostState)
 
                 // remember user / lost password
                 ValidatingUserAcess(
@@ -243,52 +179,6 @@ fun SignInScreen(
             }
         }
     )
-
-
-    /*
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ValidatingButton(onClick, errorButton, "Entrar")
-            if (viewModelButton.signUpUserExists.value) {
-                val snackbarHostState = remember { SnackbarHostState() }
-                val scope = rememberCoroutineScope()
-                Scaffold(
-                    snackbarHost = { SnackbarHost(snackbarHostState) },
-                    content = { padding ->
-                        Column(
-                            modifier = Modifier.padding(padding)
-                        ) {
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = "Usuário localizado.",
-                                    actionLabel = "OK",
-                                    duration = SnackbarDuration.Short
-                                ).run {
-                                    when (this) {
-                                        SnackbarResult.Dismissed -> {
-                                            Log.d("SNACKBAR", "Dismissed")
-                                            viewModelButton.signUpUserExists.value = false
-                                        }
-
-                                        SnackbarResult.ActionPerformed -> {
-                                            Log.d(
-                                                "SNACKBAR",
-                                                "UNDO CLICKED"
-                                            )
-                                            viewModelButton.signUpUserExists.value = false
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                )
-            }
-        }
-    */
 }
 
 @Composable
@@ -377,32 +267,6 @@ private fun ValidatingUserAcess(
         textAlign = TextAlign.Start
     )
 
-}
-
-@Composable
-private fun getErrorColor(error: Boolean): Color {
-    return if (error) Color.Red else colorResource(id = R.color.blue_500)
-}
-
-@Composable
-private fun MyCustomSnackbar(
-    snackbarData: SnackbarData,
-    modifier: Modifier = Modifier,
-    errorColor: Color,
-) {
-    Snackbar(
-        modifier = modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp),
-        containerColor = errorColor,
-        action = {
-            snackbarData.visuals.actionLabel?.let { actionLabel ->
-                TextButton(onClick = { snackbarData.dismiss() }) {
-                    Text(text = actionLabel, color = Color.White)
-                }
-            }
-        }
-    ) {
-        Text(text = snackbarData.visuals.message, color = Color.White)
-    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)

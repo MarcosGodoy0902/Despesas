@@ -91,6 +91,7 @@ fun Content_BKP(
                 //  process
                 ValidatingButton(onClick, errorButton, "Continuar")
 
+/*
                 when {
                     viewModelButton.signUpUserExists.value -> SnackBarDisplay(
                         msg = "E-mail informado já está em uso.",
@@ -111,6 +112,7 @@ fun Content_BKP(
                         false
                     )
                 }
+*/
             }
         }
     }
