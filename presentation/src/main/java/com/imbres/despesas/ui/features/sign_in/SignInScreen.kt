@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -63,48 +63,97 @@ fun SignInScreen(
         passwordViewModel.updatePassword((storePassword))
     }
 
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        ValidatingButton(onClick, errorButton, "Entrar")
-        if (viewModelButton.signUpUserExists.value) {
-            val snackbarHostState = remember { SnackbarHostState() }
-            val scope = rememberCoroutineScope()
-            Scaffold(
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                content = { padding ->
-                    Column(
-                        modifier = Modifier.padding(padding)
-                    ) {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "Usuário localizado.",
-                                actionLabel = "OK",
-                                duration = SnackbarDuration.Short
-                            ).run {
-                                when (this) {
-                                    SnackbarResult.Dismissed -> {
-                                        Log.d("SNACKBAR", "Dismissed")
-                                        viewModelButton.signUpUserExists.value = false
-                                    }
+    val snackbarHostState = remember { SnackbarHostState() }
 
-                                    SnackbarResult.ActionPerformed -> {
-                                        Log.d(
-                                            "SNACKBAR",
-                                            "UNDO CLICKED"
-                                        )
-                                        viewModelButton.signUpUserExists.value = false
-                                    }
+    Scaffold(
+        modifier = Modifier,
+        topBar = {},
+        bottomBar = {},
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val scope = rememberCoroutineScope()
+
+                ValidatingButton(onClick, errorButton, "Entrar")
+                if (viewModelButton.signUpUserExists.value) {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Usuário localizado.",
+                            actionLabel = "OK",
+                            duration = SnackbarDuration.Short
+                        ).run {
+                            when (this) {
+                                SnackbarResult.Dismissed -> {
+                                    Log.d("SNACKBAR", "Dismissed")
+                                    viewModelButton.signUpUserExists.value = false
+                                }
+
+                                SnackbarResult.ActionPerformed -> {
+                                    Log.d(
+                                        "SNACKBAR",
+                                        "UNDO CLICKED"
+                                    )
+                                    viewModelButton.signUpUserExists.value = false
                                 }
                             }
                         }
                     }
                 }
-            )
+            }
         }
-    }
+    )
+
+
+    /*
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ValidatingButton(onClick, errorButton, "Entrar")
+            if (viewModelButton.signUpUserExists.value) {
+                val snackbarHostState = remember { SnackbarHostState() }
+                val scope = rememberCoroutineScope()
+                Scaffold(
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    content = { padding ->
+                        Column(
+                            modifier = Modifier.padding(padding)
+                        ) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = "Usuário localizado.",
+                                    actionLabel = "OK",
+                                    duration = SnackbarDuration.Short
+                                ).run {
+                                    when (this) {
+                                        SnackbarResult.Dismissed -> {
+                                            Log.d("SNACKBAR", "Dismissed")
+                                            viewModelButton.signUpUserExists.value = false
+                                        }
+
+                                        SnackbarResult.ActionPerformed -> {
+                                            Log.d(
+                                                "SNACKBAR",
+                                                "UNDO CLICKED"
+                                            )
+                                            viewModelButton.signUpUserExists.value = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+        }
+    */
 }
 
 @Preview(showBackground = true, showSystemUi = true)
