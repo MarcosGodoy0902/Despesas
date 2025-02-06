@@ -57,6 +57,7 @@ fun ValidatingInputEmail(
 ) {
     val localFocusManager = LocalFocusManager.current
     val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
+    val passwordViewModel: PasswordViewModel = viewModel<PasswordViewModel>()
 
     OutlinedTextField(
         value = email,
