@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.imbres.despesas.components.DataStoreManager
-import com.imbres.despesas.ui.features.lost_password.LostPasswordScreen
+import com.imbres.despesas.ui.features.sign_in.LostPasswordScreen
 import com.imbres.despesas.ui.features.sign_in.SignInScreen
 import com.imbres.despesas.ui.features.sign_up.SignUpScreen
 import com.imbres.despesas.ui.features.splash.SplashApp
@@ -71,10 +71,6 @@ fun Navigation(
                     onGoBack = {
                         navController.popBackStack()
                     },
-                    onGoToLostPasswordScreen = {
-                        navController.popBackStack()
-                        //navController.navigate(Screen.LostPasswordScreen)
-                    }
                 )
             }
         }

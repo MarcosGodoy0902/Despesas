@@ -1,11 +1,17 @@
-package com.imbres.despesas.ui.features.lost_password
+package com.imbres.despesas.ui.features.sign_in
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,90 +20,106 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
+import com.imbres.despesas.components.MyCustomSnackbar
 import com.imbres.despesas.components.SnackBarDisplay
 import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ViewModelButton
+import com.imbres.despesas.components.getErrorColor
 import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun LostPasswordScreen(
     dataStoreManager: DataStoreManager,
     onGoBack: () -> Boolean,
-    onGoToLostPasswordScreen: () -> Unit,
 ) {
-    Content(
-        dataStoreManager,
-        onGoBack,
-        onGoToLostPasswordScreen,
-    )
-}
+    // vars
+    val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
+    val scope = rememberCoroutineScope()
+    val userDetails by dataStoreManager.getFromDataStore()
+        .collectAsState(initial = null)
+    val viewModelButton: ViewModelButton = viewModel<ViewModelButton>()
+    val onClick = {
+        viewModelButton.resendPassword(
+            emailViewModel.email,
+        )
+    }
+    val errorButton =
+        !emailViewModel.emailHasErrors && emailViewModel.email.isNotEmpty()
+    var storeEmail = ""
+    val snackbarHostState = remember { SnackbarHostState() }
+    var errorColor = getErrorColor(false)
 
-@Composable
-fun Content(
-    dataStoreManager: DataStoreManager,
-    onGoBack: () -> Boolean,
-    onGoToSignUpScreen: () -> Unit,
-) {
-    Column(
-        Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // vars
-        val emailViewModel: EmailViewModel = viewModel<EmailViewModel>()
-        val scope = rememberCoroutineScope()
-        val userDetails by dataStoreManager.getFromDataStore()
-            .collectAsState(initial = null)
-        var storeEmail = ""
-
-        if (userDetails?.email?.isNotEmpty() == true) {
-            storeEmail = userDetails!!.email
-            emailViewModel.updateEmail((storeEmail))
-        }
-
-        // email
-        ValidatingInputEmail(
-            email = emailViewModel.email,
-            updateState = {
-                if (storeEmail.isNotEmpty()) {
-                    emailViewModel.updateEmail((storeEmail))
-                } else {
-                    emailViewModel.updateEmail(it)
+    Scaffold(
+        modifier = Modifier,
+        topBar = {},
+        bottomBar = {},
+        snackbarHost = {
+            SnackbarHost(
+                snackbarHostState,
+                snackbar = { snackbarData ->
+                    MyCustomSnackbar(snackbarData, Modifier, errorColor)
                 }
-                if (it.isEmpty() || it !== userDetails?.email) {
-                    scope.launch {
-                        dataStoreManager.clearDataStore()
-                        emailViewModel.updateEmail(it)
+            )
+        },
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                // email
+                ValidatingInputEmail(
+                    email = emailViewModel.email,
+                    updateState = {
+                        if (storeEmail.isNotEmpty()) {
+                            emailViewModel.updateEmail((storeEmail))
+                        } else {
+                            emailViewModel.updateEmail(it)
+                        }
+                        if (it.isEmpty() || it !== userDetails?.email) {
+                            scope.launch {
+                                dataStoreManager.clearDataStore()
+                                emailViewModel.updateEmail(it)
+                            }
+                        }
+                    },
+                    validatorHasErrors = emailViewModel.emailHasErrors,
+                )
+
+                ValidatingButton(onClick, errorButton, "Entrar")
+
+                var statusMsg = ""
+
+                when {
+                    viewModelButton.lostPasswordFail.value -> {
+                        statusMsg = "Falha ou erro desconhecido."
+                        errorColor = getErrorColor(true)
+                        viewModelButton.signUpFail.value = false
+                    }
+
+                    viewModelButton.lostPasswordSucess.value -> {
+                        statusMsg = "Instruções enviadas, caso o email esteja cadastrado."
+                        viewModelButton.lostPasswordSucess.value = false
                     }
                 }
-            },
-            validatorHasErrors = emailViewModel.emailHasErrors,
-        )
 
-        //  process
-        val viewModelButton: ViewModelButton = viewModel<ViewModelButton>()
-        val onClick = { viewModelButton.resendPassword(emailViewModel.email) }
-        val errorButton =
-            !emailViewModel.emailHasErrors
-        ValidatingButton(onClick, errorButton, "Entrar")
+                SnackBarDisplay(statusMsg, scope, snackbarHostState)
 
-        if (viewModelButton.lostPasswordSucess.value || viewModelButton.lostPasswordFail.value) {
-            /*SnackBarDisplay(
-                msg = "Instruções enviadas, caso o email esteja cadastrado.",
-                onGoBack,
-                false
-            )*/
+            }
         }
-    }
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Preview() {
+private fun Preview() {
     LostPasswordScreen(
         dataStoreManager = DataStoreManager(LocalContext.current),
         onGoBack = { true },
-        onGoToLostPasswordScreen = {}
     )
 }

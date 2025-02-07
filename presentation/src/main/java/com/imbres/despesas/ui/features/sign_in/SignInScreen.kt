@@ -271,7 +271,7 @@ private fun ValidatingUserAcess(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Preview() {
+private fun Preview() {
     SignInScreen(
         dataStoreManager = DataStoreManager(LocalContext.current),
         onGoBack = { true },
