@@ -48,7 +48,7 @@ https://developer.android.com/develop/ui/compose/text/user-input?hl=pt-br
 https://github.com/android/snippets/blob/c79a414f423d09d009c92d69fb71e882e6edd39b/compose/snippets/src/main/java/com/example/compose/snippets/text/TextSnippets.kt#L537-L559
 */
 
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
 @Composable
 fun ValidatingInputEmail(
     email: String,
@@ -80,8 +80,9 @@ fun ValidatingInputEmail(
         }),
         trailingIcon = ({
             IconButton(onClick = {
-                emailViewModel.clearEmail()
+                emailViewModel.clearEmail(passwordViewModel)
                 updateState("")
+                emailViewModel.updateEmail("")
             }) {
                 Icon(
                     imageVector = Icons.Default.Clear,
@@ -131,8 +132,9 @@ class EmailViewModel : ViewModel() {
         email = input
     }
 
-    fun clearEmail() {
+    fun clearEmail(passwordViewModel: PasswordViewModel) {
         email = ""
+        passwordViewModel.clearPassword()
     }
 }
 
@@ -232,6 +234,10 @@ class PasswordViewModel : ViewModel() {
     fun updatePassword(input: String) {
         password = input
         shouldValidate = true // Enable validation after the first input
+    }
+
+    fun clearPassword() {
+            password = ""
     }
 }
 

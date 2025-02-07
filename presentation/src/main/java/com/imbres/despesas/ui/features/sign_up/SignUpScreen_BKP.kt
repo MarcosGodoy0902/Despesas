@@ -5,14 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.components.EmailViewModel
 import com.imbres.despesas.components.PasswordViewModel
-import com.imbres.despesas.components.SnackBarDisplay
 import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ValidatingInputPassword
@@ -66,7 +64,7 @@ fun Content_BKP(
                         passwordViewModel.updatePassword(it)
                     }
                 },
-                validatorHasErrors = passwordViewModel.passwordHasErrors
+                validatorHasErrors = passwordViewModel.passwordHasErrors,
             )
 
             // user access

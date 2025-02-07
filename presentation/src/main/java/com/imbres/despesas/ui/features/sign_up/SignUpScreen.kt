@@ -11,7 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imbres.despesas.components.EmailViewModel
 import com.imbres.despesas.components.PasswordViewModel
-import com.imbres.despesas.components.SnackBarDisplay
 import com.imbres.despesas.components.ValidatingButton
 import com.imbres.despesas.components.ValidatingInputEmail
 import com.imbres.despesas.components.ValidatingInputPassword
@@ -56,7 +55,7 @@ fun SignUpScreen(
                         passwordViewModel.updatePassword(it)
                     }
                 },
-                validatorHasErrors = passwordViewModel.passwordHasErrors
+                validatorHasErrors = passwordViewModel.passwordHasErrors,
             )
 
             // user access
