@@ -1,5 +1,6 @@
 package com.imbres.despesas.components
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -53,6 +54,7 @@ class ViewModelButton : ViewModel() {
                             is FirebaseAuthInvalidCredentialsException -> {
                                 // Credenciais inválidas
                                 signUpUserInvalidCredentials.value = true
+                                signUpInProgress.value = false
                             }
 
                             is FirebaseAuthInvalidUserException,
@@ -61,14 +63,15 @@ class ViewModelButton : ViewModel() {
                                 -> {
                                 // Usuário não encontrado
                                 signUpFail.value = true
+                                signUpInProgress.value = false
                             }
 
                             else -> {
                                 // Outro tipo de erro
                                 signUpFail.value = true
+                                signUpInProgress.value = false
                             }
                         }
-                        signUpInProgress.value = false
                     }
             }
         }
@@ -102,11 +105,13 @@ class ViewModelButton : ViewModel() {
                         if (email != null) {
                             // E-mail já cadastrado
                             signUpUserExists.value = true
+                            signUpInProgress.value = false
                         }
                     }
                 }
                 .addOnCompleteListener { exception ->
                     // Prosseguir com cadastro
+                    signUpInProgress.value = false
                 }
 
             if (!signUpUserExists.value) {
@@ -127,13 +132,14 @@ class ViewModelButton : ViewModel() {
                                 .set(data)
                                 .addOnSuccessListener {
                                     signUpSucess.value = true
+                                    signUpInProgress.value = false
                                 }
                                 .addOnFailureListener {
                                     signUpFail.value = true
+                                    signUpInProgress.value = false
                                 }
                         }
                     }
-                signUpInProgress.value = false
             }
         }
     }
