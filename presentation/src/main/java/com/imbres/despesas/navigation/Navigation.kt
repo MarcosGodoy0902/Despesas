@@ -43,41 +43,50 @@ fun Navigation(
     val currentScreen =
         navController.currentBackStackEntryAsState().value?.destination?.route?.substringAfter(".Screen.")
     val topBarVisible = rememberSaveable { (mutableStateOf(false)) }
-    val bottomBarVisible = rememberSaveable { (mutableStateOf(false)) }
-    val containerColorControl = if (topBarVisible.value) colorResource(R.color.blue_500) else Color.White
+    val containerColorControl =
+        if (topBarVisible.value) colorResource(R.color.blue_500) else Color.White
+    var titleTopBar = ""
 
-    topBarVisible.value = (currentScreen == "LostPassword")
+    topBarVisible.value = (currentScreen == "SignUp" || currentScreen == "LostPassword")
+
+    when (currentScreen) {
+        "SignUp" -> {
+            titleTopBar = "Sua conta"
+        }
+
+        "LostPassword" -> {
+            titleTopBar = "Acessar conta"
+        }
+    }
 
     Scaffold(
         topBar = {
-            if (topBarVisible.value) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            "Despesas",
-                            fontSize = 18.sp
-                        )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        //containerColor = colorResource(R.color.blue_500),
-                        containerColor = containerColorControl,
-                        titleContentColor = Color.White,
-                    ),
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { navController.navigateUp() })
-                        {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "null",
-                                modifier = Modifier.size(20.dp),
-                                tint = Color.White
-                            )
-                        }
-                    },
-
+            TopAppBar(
+                title = {
+                    Text(
+                        //"Despesas",
+                        titleTopBar,
+                        fontSize = 18.sp
                     )
-            }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = containerColorControl,
+                    titleContentColor = Color.White,
+                ),
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navController.navigateUp() })
+                    {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "null",
+                            modifier = Modifier.size(20.dp),
+                            tint = Color.White
+                        )
+                    }
+                },
+
+                )
         }
     ) { contentPadding ->
         NavHost(

@@ -3,11 +3,12 @@ package com.imbres.despesas.ui.features.sign_in
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,8 +17,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.imbres.despesas.R
 import com.imbres.despesas.components.DataStoreManager
 import com.imbres.despesas.components.EmailViewModel
 import com.imbres.despesas.components.MyCustomSnackbar
@@ -67,11 +74,20 @@ fun LostPasswordScreen(
             Column(
                 modifier = Modifier
                     .padding(padding)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
+                // Títle
+                Text(
+                    text = "Vamos redefinir sua senha?",
+                    modifier = Modifier
+                        .padding(end = 20.dp),
+                    color = colorResource(id = R.color.blue_500),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    textAlign = TextAlign.Start
+                )
                 // email
                 ValidatingInputEmail(
                     email = emailViewModel.email,
@@ -99,17 +115,16 @@ fun LostPasswordScreen(
                     viewModelButton.lostPasswordFail.value -> {
                         statusMsg = "Falha ou erro desconhecido."
                         errorColor = getErrorColor(true)
-                        viewModelButton.signUpFail.value = false
+                        viewModelButton.lostPasswordFail.value = false
                     }
 
                     viewModelButton.lostPasswordSucess.value -> {
                         statusMsg = "Instruções enviadas, caso o email esteja cadastrado."
+                        errorColor = getErrorColor(false)
                         viewModelButton.lostPasswordSucess.value = false
                     }
                 }
-
                 SnackBarDisplay(statusMsg, scope, snackbarHostState)
-
             }
         }
     )

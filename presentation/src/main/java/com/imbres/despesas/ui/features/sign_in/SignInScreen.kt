@@ -103,6 +103,17 @@ fun SignInScreen(
                     passwordViewModel.updatePassword((storePassword))
                 }
 
+                // Títle
+                Text(
+                    text = "Acessar conta",
+                    modifier = Modifier
+                        .padding(end = 20.dp),
+                    color = colorResource(id = R.color.blue_500),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    textAlign = TextAlign.Start
+                )
+
                 // email
                 ValidatingInputEmail(
                     email = emailViewModel.email,
