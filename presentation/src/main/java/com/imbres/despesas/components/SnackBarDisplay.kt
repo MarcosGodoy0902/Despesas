@@ -25,6 +25,7 @@ fun SnackBarDisplay(
     statusMsg: String,
     scope: CoroutineScope,
     snackbarHostState: SnackbarHostState,
+    onGoBack: () -> Boolean,
 ) {
     if (statusMsg.isNotEmpty()) {
         scope.launch {
@@ -37,6 +38,7 @@ fun SnackBarDisplay(
                 SnackbarResult.Dismissed -> {
                     Log.d("SNACKBAR", "Dismissed")
                     //statusMsg = ""
+                    onGoBack()
                 }
 
                 SnackbarResult.ActionPerformed -> {
@@ -45,6 +47,7 @@ fun SnackBarDisplay(
                         "UNDO CLICKED"
                     )
                     //statusMsg = ""
+                    onGoBack()
                 }
             }
         }

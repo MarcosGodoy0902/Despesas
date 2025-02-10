@@ -152,7 +152,7 @@ fun SignUpScreen(
                                     viewModelButton.signUpSucess.value = false
                                 }
                             }
-                            SnackBarDisplay(statusMsg, scope, snackbarHostState)
+                            SnackBarDisplay(statusMsg, scope, snackbarHostState, onGoBack)
                         }
                     }
                 }

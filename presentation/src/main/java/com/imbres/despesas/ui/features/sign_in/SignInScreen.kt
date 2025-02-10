@@ -175,7 +175,7 @@ fun SignInScreen(
                     }
                 }
 
-                SnackBarDisplay(statusMsg, scope, snackbarHostState)
+                SnackBarDisplay(statusMsg, scope, snackbarHostState, onGoBack)
 
                 // remember user / lost password
                 ValidatingUserAcess(

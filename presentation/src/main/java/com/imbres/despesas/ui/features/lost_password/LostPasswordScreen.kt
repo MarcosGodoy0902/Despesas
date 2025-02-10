@@ -124,7 +124,7 @@ fun LostPasswordScreen(
                         viewModelButton.lostPasswordSucess.value = false
                     }
                 }
-                SnackBarDisplay(statusMsg, scope, snackbarHostState)
+                SnackBarDisplay(statusMsg, scope, snackbarHostState, onGoBack)
             }
         }
     )
