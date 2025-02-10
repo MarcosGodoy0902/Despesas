@@ -152,7 +152,12 @@ fun SignInScreen(
                     validatorHasErrors = passwordViewModel.passwordHasErrors
                 )
 
-                ValidatingButton(onClick, errorButton, "Entrar")
+                ValidatingButton(
+                    onClick,
+                    errorButton,
+                    "Entrar",
+                    viewModelButton.signUpInProgress.value
+                )
 
                 var statusMsg = ""
 

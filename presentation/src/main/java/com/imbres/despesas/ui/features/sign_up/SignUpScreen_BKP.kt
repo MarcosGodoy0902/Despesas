@@ -87,7 +87,12 @@ fun Content_BKP(
                     !emailViewModel.emailHasErrors && emailViewModel.email.isNotEmpty() && !passwordViewModel.passwordHasErrors && passwordViewModel.password.isNotEmpty()
 
                 //  process
-                ValidatingButton(onClick, errorButton, "Continuar")
+                ValidatingButton(
+                    onClick,
+                    errorButton,
+                    "Continuar",
+                    viewModelButton.signUpInProgress.value
+                )
 
 /*
                 when {

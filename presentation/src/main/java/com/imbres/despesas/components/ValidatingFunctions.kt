@@ -237,7 +237,7 @@ class PasswordViewModel : ViewModel() {
     }
 
     fun clearPassword() {
-            password = ""
+        password = ""
     }
 }
 
@@ -246,6 +246,7 @@ fun ValidatingButton(
     onClick: () -> Unit,
     errorButton: Boolean,
     textAction: String,
+    value: Boolean,
 ) {
     Button(
         onClick = { onClick() },
@@ -258,11 +259,15 @@ fun ValidatingButton(
             contentColor = Color(0xFF000000)
         )
     ) {
-        Text(
-            text = textAction,
-            color = Color.White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight(500)
-        )
+        if (value) {
+            LoadingAnimation()
+        } else {
+            Text(
+                text = textAction,
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight(500)
+            )
+        }
     }
 }

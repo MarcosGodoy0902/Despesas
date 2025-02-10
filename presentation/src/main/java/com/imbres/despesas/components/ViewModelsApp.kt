@@ -13,7 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
 
 class ViewModelButton : ViewModel() {
-    val signUpInProgress = mutableStateOf(true)
+    val signUpInProgress = mutableStateOf(false)
     val signUpSucess = mutableStateOf(false)
     val signUpUserExists = mutableStateOf(false)
     val signUpFail = mutableStateOf(false)
@@ -29,6 +29,8 @@ class ViewModelButton : ViewModel() {
         nameNewUser: String,
         signUp: Boolean,
     ) {
+        signUpInProgress.value = true
+
         if (signUp) {
             createUserInFirebase(
                 email = emailNewUser,
@@ -42,41 +44,31 @@ class ViewModelButton : ViewModel() {
                     .signInWithEmailAndPassword(emailNewUser, passwordNewUser)
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
-                            signUpInProgress.value = false
                             signUpUserExists.value = true
+                            signUpInProgress.value = false
                         }
                     }
                     .addOnFailureListener { exception ->
                         when (exception) {
                             is FirebaseAuthInvalidCredentialsException -> {
                                 // Credenciais inválidas
-                                signUpInProgress.value = false
                                 signUpUserInvalidCredentials.value = true
                             }
 
-                            is FirebaseAuthInvalidUserException -> {
+                            is FirebaseAuthInvalidUserException,
+                            is FirebaseAuthException,
+                            is FirebaseFirestoreException,
+                                -> {
                                 // Usuário não encontrado
-                                signUpInProgress.value = false
-                                signUpFail.value = true
-                            }
-
-                            is FirebaseAuthException -> {
-                                // Outro erro de autenticação
-                                signUpInProgress.value = false
-                                signUpFail.value = true
-                            }
-
-                            is FirebaseFirestoreException -> {
-                                signUpInProgress.value = false
                                 signUpFail.value = true
                             }
 
                             else -> {
                                 // Outro tipo de erro
-                                signUpInProgress.value = false
                                 signUpFail.value = true
                             }
                         }
+                        signUpInProgress.value = false
                     }
             }
         }
@@ -115,7 +107,6 @@ class ViewModelButton : ViewModel() {
                 }
                 .addOnCompleteListener { exception ->
                     // Prosseguir com cadastro
-                    signUpInProgress.value = false
                 }
 
             if (!signUpUserExists.value) {
@@ -123,7 +114,6 @@ class ViewModelButton : ViewModel() {
                     .getInstance()
                     .createUserWithEmailAndPassword(email, password)
                     .addOnSuccessListener {
-                        signUpInProgress.value = false
                     }
                     .addOnCompleteListener {
                         userId.value = FirebaseAuth.getInstance().uid
@@ -141,10 +131,9 @@ class ViewModelButton : ViewModel() {
                                 .addOnFailureListener {
                                     signUpFail.value = true
                                 }
-                            signUpInProgress.value = false
                         }
-
                     }
+                signUpInProgress.value = false
             }
         }
     }
