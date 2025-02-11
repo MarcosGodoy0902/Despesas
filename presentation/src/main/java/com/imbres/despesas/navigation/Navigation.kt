@@ -2,6 +2,7 @@ package com.imbres.despesas.navigation
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -60,33 +61,34 @@ fun Navigation(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        //"Despesas",
-                        titleTopBar,
-                        fontSize = 18.sp
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = containerColorControl,
-                    titleContentColor = Color.White,
-                ),
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navController.navigateUp() })
-                    {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "null",
-                            modifier = Modifier.size(20.dp),
-                            tint = Color.White
+        Modifier.fillMaxSize(), {
+            if (topBarVisible.value) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            //"Despesas",
+                            titleTopBar,
+                            fontSize = 18.sp
                         )
-                    }
-                },
-
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = containerColorControl,
+                        titleContentColor = Color.White,
+                    ),
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { navController.navigateUp() })
+                        {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "null",
+                                modifier = Modifier.size(20.dp),
+                                tint = Color.White
+                            )
+                        }
+                    },
                 )
+            }
         }
     ) { contentPadding ->
         NavHost(
