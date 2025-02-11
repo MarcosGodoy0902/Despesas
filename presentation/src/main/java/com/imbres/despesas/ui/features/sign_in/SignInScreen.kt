@@ -97,7 +97,7 @@ fun SignInScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val scope = rememberCoroutineScope()
+                //val scope = rememberCoroutineScope()
                 if (userDetails?.email?.isNotEmpty() == true) {
                     storeEmail = userDetails!!.email
                     storePassword = userDetails!!.password

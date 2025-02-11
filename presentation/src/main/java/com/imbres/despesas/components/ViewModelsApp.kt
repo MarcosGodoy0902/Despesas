@@ -1,6 +1,5 @@
 package com.imbres.despesas.components
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,7 @@ class ViewModelButton : ViewModel() {
     val signUpFail = mutableStateOf(false)
     val signUpUserInvalidCredentials = mutableStateOf(false)
 
-    val lostPasswordInProgress = mutableStateOf(true)
+    val lostPasswordInProgress = mutableStateOf(false)
     val lostPasswordSucess = mutableStateOf(false)
     val lostPasswordFail = mutableStateOf(false)
 
@@ -78,13 +77,15 @@ class ViewModelButton : ViewModel() {
     }
 
     fun resendPassword(email: String) {
+        lostPasswordInProgress.value = true
         FirebaseAuth.getInstance().sendPasswordResetEmail(email).addOnCompleteListener {
-            lostPasswordInProgress.value = false
             if (it.isSuccessful) {
                 lostPasswordSucess.value = true
+                lostPasswordInProgress.value = false
             }
         }.addOnFailureListener {
             lostPasswordFail.value = true
+            lostPasswordInProgress.value = false
         }
     }
 

@@ -111,7 +111,7 @@ fun LostPasswordScreen(
                     onClick,
                     errorButton,
                     "Entrar",
-                    viewModelButton.signUpInProgress.value
+                    viewModelButton.lostPasswordInProgress.value
                 )
 
                 var statusMsg = ""
