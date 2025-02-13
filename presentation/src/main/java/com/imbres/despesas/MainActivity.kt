@@ -17,13 +17,16 @@ import com.imbres.despesas.ui.theme.DespesasTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
+
         window.statusBarColor =
-            resources.getColor(R.color.background_app_bar, null)  // mudar cor da status bar
+            resources.getColor(R.color.blue_500, null)  // mudar cor da status bar
         val windowInsetsController = WindowInsetsControllerCompat(window, window.decorView)
         windowInsetsController.isAppearanceLightStatusBars =
             false  // Para caracteres claros na status bar - manter "false"
-        window.navigationBarColor = resources.getColor(R.color.background_app_bar, null)
+        window.navigationBarColor =
+            resources.getColor(R.color.blue_500, null)
         windowInsetsController.isAppearanceLightNavigationBars =
             false // Para caracteres claros na bottom bar - manter "false"
 

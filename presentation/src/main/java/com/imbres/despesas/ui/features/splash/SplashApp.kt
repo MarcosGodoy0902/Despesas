@@ -1,6 +1,5 @@
 package com.imbres.despesas.ui.features.splash
 
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +46,7 @@ fun SplashApp(
         Image(
             painter = painterResource(id = R.drawable.background),
             contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
         )
 
@@ -76,7 +76,6 @@ fun SplashApp(
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
-                //color = colorResource(R.color.blue_500)
             )
             Text(
                 text = "\"Controlar despesas domésticas garante segurança e estabilidade financeira a longo prazo.\"",
@@ -86,7 +85,6 @@ fun SplashApp(
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
                 color = Color.White
-                //color = colorResource(R.color.blue_500)
             )
         }
     }
