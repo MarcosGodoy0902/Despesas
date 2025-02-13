@@ -1,6 +1,7 @@
 package com.imbres.despesas.ui.features.sign_in
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,8 +25,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -104,6 +107,24 @@ fun SignInScreen(
                     emailViewModel.updateEmail((storeEmail))
                     passwordViewModel.updatePassword((storePassword))
                 }
+
+                // Títle
+                Text(
+                    text = "Despesas",
+                    modifier = Modifier
+                        .padding(end = 20.dp),
+                    color = colorResource(id = R.color.blue_500),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(700),
+                    textAlign = TextAlign.Start
+                )
+
+                // Logo
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds
+                )
 
                 // Títle
                 Text(
